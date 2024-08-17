@@ -1,0 +1,56 @@
+{
+  "name": "package-name",
+  "description": "TypeScript library template",
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "unpkg": "./dist/index.js",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build:typecheck": "tsc --noEmit",
+    "build:build": "vite build",
+    "build": "npm-run-all --parallel build:*",
+    "lint": "eslint . --fix",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "site:build": "cd site && npm run build",
+    "site:dev": "cd site && npm run start -- --host 0.0.0.0",
+    "site:api": "typedoc --cacheBust --searchInComments --searchInDocuments",
+    "site:api:dev:watch": "typedoc --watch --cacheBust --searchInComments --searchInDocuments",
+    "site:api:dev:serve": "serve -p 3001 -L site/build/api",
+    "site:api:dev": "npm-run-all --parallel site:api:dev:*"
+  },
+  "devDependencies": {
+    "@edge-runtime/vm": "^3.2.0",
+    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/js": "^9.6.0",
+    "@types/node": "^18.11.9",
+    "@typescript-eslint/eslint-plugin": "^7.14.1",
+    "@vitest/browser": "^1.6.0",
+    "@vitest/coverage-v8": "^1.6.0",
+    "camelcase": "^8.0.0",
+    "eslint": "^8.56.0",
+    "globals": "^15.6.0",
+    "npm-run-all": "^4.1.5",
+    "serve": "^14.2.3",
+    "typedoc": "^0.26.3",
+    "typescript": "5.4.5",
+    "vite": "^5.3.2",
+    "vite-plugin-dts": "^3.9.1",
+    "vitest": "^1.6.0",
+    "webdriverio": "^8.39.0"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}

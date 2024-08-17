@@ -1,0 +1,19 @@
+repository:
+  has_issues: true
+  has_projects: false
+  has_wiki: false
+  has_downloads: true
+  default_branch: main
+
+labels:
+  - name: bug
+    color: d73a4a
+    description: Something isn't working
+  - name: feature request
+    color: C1117B
+    description: Suggest an idea for future development
+  - name: question
+    color: 813195
+    description: Further information is requested
+
+

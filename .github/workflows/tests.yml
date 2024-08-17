@@ -1,0 +1,97 @@
+name: Tests
+
+on:
+  push:
+    paths-ignore:
+      - "**.md"
+      - ".gitignore"
+      - "typedoc.cjs"
+      - ".editorconfig"
+      - "site/**"
+    branches:
+      - main
+  pull_request:
+    paths-ignore:
+      - "**.md"
+      - ".gitignore"
+      - "typedoc.cjs"
+      - ".editorconfig"
+      - "site/**"
+    branches:
+      - main
+
+jobs:
+  browsers-and-edge:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        runtime: [chrome, firefox, edge]
+    name: test ${{ matrix.runtime }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+      - run: npm install
+      - run: npm run build
+      - run: npm run test
+        env:
+          TEST_RUNTIME: ${{ matrix.runtime }}
+  safari:
+    runs-on: macos-latest
+    name: test safari
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+      - run: npm install
+      - run: npm run build
+      - run: npm run test -- --browser.headless=false
+        env:
+          TEST_RUNTIME: safari
+  bun:
+    runs-on: ubuntu-latest
+    name: test bun
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - run: bun --bun run build
+      - run: bun test
+  node:
+    runs-on: ubuntu-latest
+    name: test node v22
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+      - run: npm install
+      - run: npm run build
+      - run: npm run test -- --coverage
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+  # Test some older versions of Node.js as well
+  node-versions:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20, 18, 16]
+    name: test node v${{ matrix.node-version }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+      - run: npm install
+      - run: npm run build
+      - run: npm run test

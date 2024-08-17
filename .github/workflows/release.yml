@@ -1,0 +1,49 @@
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      packageToPublish:
+        description: 'Package to publish'
+        required: true
+        default: '.'
+        type: choice
+        options:
+          - .
+
+jobs:
+  publish:
+    permissions:
+      contents: read
+      packages: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+          cache: npm
+          registry-url: https://registry.npmjs.org
+          always-auth: true
+
+      # You do always have to install and build the root package
+      - run: npm install
+      - run: npm run build
+
+      # Don't need to cd for tests because vitest picks up all of them from the root
+      - run: npm run test
+
+      - run: cd ${{ github.event.inputs.packageToPublish }} && npm install
+        if: ${{ github.event.inputs.packageToPublish != '.' }}
+
+      - run: cd ${{ github.event.inputs.packageToPublish }} && npm run build
+        if: ${{ github.event.inputs.packageToPublish != '.' }}
+
+      - name: Publish to NPM
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: cd ${{ github.event.inputs.packageToPublish }} && npm publish --access=public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

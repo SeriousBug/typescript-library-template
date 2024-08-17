@@ -1,0 +1,9 @@
+ignore:
+  - "site/"
+  - "typedoc.cjs"
+  - "vite.config.js"
+  - "eslint.config.mjs"
+coverage:
+  range: 0..100
+  round: up
+  precision: 2
